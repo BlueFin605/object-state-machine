@@ -17,7 +17,7 @@
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "jest": "^23.5.0",
+    "jest": "^23.6.0",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3",
     "uglifyjs": "^2.4.11"
@@ -25,7 +25,6 @@
   "scripts": {
     "test": "jest",
     "start": "node ./examples/samplesingle.js",
-    "pretest": "npm run lint",
     "lint": "eslint ./src/*.js ./src/**/*.js ./examples/*.js ./examples/**/*.js",
     "precompile": "npm run clean",
     "compile": "npm run compile:js",
