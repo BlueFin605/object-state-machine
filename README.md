@@ -25,8 +25,9 @@ Working on it, coming soon
 1. Finish README
 2. Complete unit tests
 3. Add proper logging
-4. Type checking?
-5. Enable child state machine to allow breaking up a larger entity into smaller orthogonal state machines
+4. Add a fluent builder interface to create a statemachine
+5. Type checking?
+6. Enable child state machine to allow breaking up a larger entity into smaller orthogonal state machines
 
 ## Contributing
 
