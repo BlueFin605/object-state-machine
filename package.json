@@ -25,7 +25,8 @@
   "scripts": {
     "test": "jest",
     "start": "node ./examples/samplesingle.js",
-    "lint": "eslint ./src/*.js ./src/**/*.js ./examples/*.js ./examples/**/*.js",
+    "pretest": "npm run lint",
+    "lint": "eslint .",
     "precompile": "npm run clean",
     "compile": "npm run compile:js",
     "build": "npm run build:bundle",
