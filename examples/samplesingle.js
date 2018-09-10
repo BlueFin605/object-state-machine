@@ -1,0 +1,46 @@
+// var smcollection = require('../collections/statemachinecollection.js')
+var sm = require('../src/statemachine.js')
+var onhook = require('./states/stateonhook.js')
+var dialtone = require('./states/statedialtone')
+var offering = require('./states/stateoffering')
+var ringback = require('./states/stateringback')
+var connected = require('./states/stateconnected')
+
+var states = {
+  onhook: {
+    create: function (statemachine) {
+      return new onhook.OnHook(statemachine)
+    }
+  },
+  dialtone: {
+    create: function (statemachine) {
+      return new dialtone.DialTone(statemachine)
+    }
+  },
+  offering: {
+    create: function (statemachine) {
+      return new offering.Offering(statemachine)
+    }
+  },
+  ringback: {
+    create: function (statemachine) {
+      return new ringback.RingBack(statemachine)
+    }
+  },
+  connected: {
+    create: function (statemachine) {
+      return new connected.Connected(statemachine)
+    }
+  }
+}
+
+var statemachine = new sm.StateMachine('phone sm', states)
+
+console.log('Single instance state machine')
+console.log('=============================')
+statemachine.setState(statemachine.createNextState('onhook', 'dataasstring'))
+statemachine.persistState((state, data) => { console.log(`phone sm persist state ${state}:${data}`) })
+statemachine.changeState((state, data) => state.offHook(data))
+statemachine.changeState((state, data) => state.dial(data, '+64 (09) 123456'))
+statemachine.changeState((state, data) => state.connected(data))
+statemachine.changeState((state, data) => state.hangUp(data))
