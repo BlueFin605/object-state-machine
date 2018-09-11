@@ -13,7 +13,6 @@ deploy:
   api_key:
     secure: cZq0auueuVS/3JG/5FTcEpr7HT45mX2vmOLRw2v61KavbFCAKeX7X65jDszLM/+roLs0IpqqnNrljJqR9uOKb2/DB05ZXw2DOhPV98UwLB0dwzsiCIX4noEoU3RaPbQ1I90Cuei+GiNJLtss4k3kr4tib3ravx5QC1gtmi9YkbDI5CkW6JeuzDKRW263RZEW2l1tFVhZoUYRmfv1UhC4oatRbI9U6R5+jkmoOg6h70LYixna5+08jHrgfBYPGCqztC3TxUzgdb5b1I53RUByIBpkfWSVWXXY5TWNthXQv5iWsE58Ox5w08ztEEWirfBQVDeip711lu38IMGEV+XwwhGweNKdoCzZYazkrEHjf/IPok+rN1h1Ce2iAEuS/4SeCYSfH5WLipxZR3Uaop9KtJpJfG4Y750uqhPo1hQFAT2Ry/nJjAsJ8GonP6APGeS4xpjN7imtlrp8pPxC4MthHSM6WE8ucU+Ee6uS5OA5EmaN0B97HhDoR28oGiztrEyBDjdm9PhCEHn+dm63JK8Jbw21BKw3bKMg+nZFdcIRkZzGVGJKrS/kqPpfGsxsyBl8j6agxSfaYKz6Z7MX/gPLlb/eBVyloCGC+HLPhFDJ/55ensYwEl7djnhqnLdeYx1trPqX4x9KsaeXxSRqd51B1c6AdFJsXYU/O8imC/o5avs=
   skip_cleanup: true
-  github_token: "$github_token"
   local_dir: build
   on:
     branch: master
