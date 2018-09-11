@@ -7,6 +7,7 @@
   "main": "statemachine.js",
   "keywords": [],
   "author": "",
+  "homepage": "https://BlueFin605.github.io/object-state-machine/",  
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
@@ -20,19 +21,19 @@
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3",
-    "uglifyjs": "^2.4.11"
+    "uglifyjs": "^2.4.11",
+    "watchify": "^3.11.0"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest ./src",
     "start": "node ./examples/samplesingle.js",
     "pretest": "npm run lint",
-    "lint": "eslint .",
-    "precompile": "npm run clean",
+    "lint": "eslint ./src/*.js ./src/**/*.js ./examples/*.js ./examples/**/*.js",
+    "precompile": "npm run build:clean",
     "compile": "npm run compile:js",
-    "build": "npm run build:bundle",
-    "clean": "rimraf lib/*",
-    "compile:js": "babel src -d lib/js",
-    "build:bundle": "uglifyjs lib/js/*.js -mc > ./lib/public.js"
+    "build": "npm run compile",
+    "build:clean": "rimraf build/*",
+    "compile:js": "babel src -d build"
   },
   "dependencies": {
     "expect.js": "^0.3.1",
