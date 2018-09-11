@@ -7,7 +7,6 @@
   "main": "statemachine.js",
   "keywords": [],
   "author": "",
-  "homepage": "https://BlueFin605.github.io/object-state-machine/",  
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
