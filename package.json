@@ -2,7 +2,6 @@
   "name": "object-state-machine",
   "version": "1.0.1",
   "license": "MIT",
-  "private": true,
   "description": "",
   "main": "statemachine.js",
   "keywords": [],
