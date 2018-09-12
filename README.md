@@ -6,10 +6,6 @@ A JavaScript State Machine where each state and it's data is represented by an o
 3. The parameters can be different for the different events, allowing for flexible modeling of a variety of inputs 
 4. Each state decides what state if any, an event will transition the state machine to 
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Installation
 
 Using npm:
