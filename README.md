@@ -22,8 +22,9 @@ In Node.js:
 
 ### Usage
 
-A Factory object needs to be implemented that will instantiate each of the different states, each property has a function to create the object that represents the state.
+A factory object needs to be implemented that will instantiate each of the different states, each property has a function to create the object that represents the state.
 
+```shell
 var statesFactory = {
   connected: {
     create: function (statemachine) {
@@ -41,13 +42,17 @@ var statesFactory = {
     }
   }
 }
+```
 
 The state machine is constructed, passing in a name that will represent the state machine in logging and the state factory
 
+```shell
 var sm = new statemachine.StateMachine('sample state machine', statesFactory)
+```
 
 Each state is represented by an object and each object implements the events that it needs to handle, returning either the next state if it wants to transition to a new state or return null or this to not transistion.  The next state is constructed using the createNextState function which takes the name of the state and any data you wish to store.  If the state wishes to change the data associated with the state, it needs to transition to a new state, which could be a new instance of the same type. 
 
+```shell
 class Connected {
   constructor (statemachine) {
     this.name = 'disconnected'
@@ -64,17 +69,22 @@ class Connected {
     return this.statemachine.createNextState('dropping', null)
   }
 }
+```
 
 To set the state machine to it's initial state, call setState and pass in the state and it's data, which can be created by using the createNextState function of the state machine..
 
+```shell
 statemachine.setState(statemachine.createNextState('disconnected', 'not connected'))
+```
 
-Events are fired against the state machine, because the state and it's data is internal to the state machine the ponly way you can interact with either is by firing events on the state machine.  Each event can have it's own unique parameters allowing support to a range of events from different sources.  The current state and it's data is passed to the callback allowing you to choose what event to call and to pass it's data along with any additional information that is relevent to the event.
+Events are fired against the state machine, because the state and it's data is internal to the state machine the only way you can interact with either is by firing events on the state machine.  Each event can have it's own unique parameters allowing support to a range of events from different sources.  The current state and it's data is passed to the callback allowing you to choose what event to call and to pass it's data along with any additional information that is relevent to the event.
 
+```shell
 sm.changeState((state, data) => state.onDisconnected(data, 'shutdown'))
 sm.changeState((state, data) => state.dropConnection(data))
+```
 
-If yu wish to persist the state of the state machine to storage somewhere you can supply a callbackwhich gets called whenever the state machine transistions.
+If you wish to persist the state of the state machine to storage somewhere you can supply a callback which gets called whenever the state machine transistions.
 
 statemachine.persistState((state, data) => { console.log(`we can save to state:${state.name} and it's data:${data} somewhere`)})
 
