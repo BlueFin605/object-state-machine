@@ -1,5 +1,4 @@
 var smcollection = require('../src/collections/statemachinecollection.js')
-var sm = require('../src/statemachine.js')
 var onhook = require('./states/stateonhook.js')
 var dialtone = require('./states/statedialtone')
 var offering = require('./states/stateoffering')
@@ -34,12 +33,11 @@ var stateFactory = {
   }
 }
 
-var statemachine = new sm.StateMachine('phone sm', stateFactory)
 var statemachinecollection = new smcollection.StateMachineCollection('phone(s) sm', stateFactory)
 
 console.log('Multi instance state machine')
 console.log('============================')
-statemachinecollection.addState('0x1', statemachine.createNextState('onhook', 'dataasstring'))
+statemachinecollection.initialiseState('0x1', (creator) => creator.createNextState('onhook', 'dataasstring'))
 statemachinecollection.persistState((key, state, data) => { console.log(`phone(s) sm persist state ${key}:${state.name}:${data}`) })
 statemachinecollection.changeState('0x1', (state, data) => state.offHook(data))
 statemachinecollection.changeState('0x1', (state, data) => state.dial(data, '+64 (09) 123456'))

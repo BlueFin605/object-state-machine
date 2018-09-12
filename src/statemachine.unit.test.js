@@ -22,17 +22,17 @@ test('constructor saves init values', () => {
 })
 
 test('persistState saves callback', () => {
-  var statemachine = new sm.StateMachine('smname', null)
+  var statemachine = new sm.StateMachine('smname', null, null)
   var callback = (state, data) => { console.log(`phone sm persist state ${state}:${data}`) }
   statemachine.persistState(callback)
   expect(statemachine.persistStateCallback).toBe(callback)
 })
 
-test('setstate sets state and data', () => {
+test('state initialisor gets called', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null)
-  statemachine.setState(origstatedata)
+  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  statemachine.changeState((state, data) => null)
   expect(statemachine.currentData).toBe('data')
   expect(statemachine.currentState).toBe(origstate)
 })
@@ -40,46 +40,61 @@ test('setstate sets state and data', () => {
 test('change state to null makes no change', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null)
-  statemachine.setState(origstatedata)
+  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var newstate = { state: 'state2' }
+  var newdata = { data: 'data3' }
+  var newstatedata = { state: newstate, data: newdata }
+  statemachine.changeState((state, data) => newstatedata)
   statemachine.changeState((state, data) => null)
-  expect(statemachine.currentData).toBe('data')
-  expect(statemachine.currentState).toBe(origstate)
+  expect(statemachine.currentData).toBe(newdata)
+  expect(statemachine.currentState).toBe(newstate)
 })
 
 test('change state to same state makes no change', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null)
-  statemachine.setState(origstatedata)
-
-  var newstatedata = { state: origstate, data: 'data2' }
+  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var newstate = { state: 'state2' }
+  var newdata = { data: 'data3' }
+  var newstatedata = { state: newstate, data: newdata }
   statemachine.changeState((state, data) => newstatedata)
-  expect(statemachine.currentData).toBe('data')
-  expect(statemachine.currentState).toBe(origstate)
+  statemachine.changeState((state, data) => newstatedata)
+  expect(statemachine.currentData).toBe(newdata)
+  expect(statemachine.currentState).toBe(newstate)
 })
 
 test('change state to new state changes state', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null)
-  statemachine.setState(origstatedata)
-
+  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
   var newstate = { state: 'state2' }
-  var newstatedata = { state: newstate, data: 'data2' }
+  var newdata = { data: 'data3' }
+  var newstatedata = { state: newstate, data: newdata }
   statemachine.changeState((state, data) => newstatedata)
-  expect(statemachine.currentData).toBe('data2')
-  expect(statemachine.currentState).toBe(newstate)
+  var newerstate = { state: 'state3' }
+  var newerdata = { data: 'data4' }
+  var newerstatedata = { state: newerstate, data: newerdata }
+  statemachine.changeState((state, data) => newerstatedata)
+  expect(statemachine.currentData).toBe(newerdata)
+  expect(statemachine.currentState).toBe(newerstate)
+})
+
+test('initial setting of state does not persist callback', () => {
+  var origstate = { state: 'state' }
+  var origstatedata = { state: origstate, data: 'data' }
+  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var callback = sinon.fake()
+  statemachine.persistState(callback)
+  statemachine.changeState((state, data) => null)
+  assert(!callback.called)
 })
 
 test('change state to new state changes state calls persist callback', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null)
-  statemachine.setState(origstatedata)
+  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
   var callback = sinon.fake()
   statemachine.persistState(callback)
-
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }

@@ -6,13 +6,12 @@ class StateMachineCollection {
     this.name = name
     this.states = states
   }
-  addState (key, state) {
+  initialiseState (key, callback) {
     if (this.collection.has(key)) {
       console.log(`${key} already exists in collection`)
       return
     }
-    var statemachine = new sm.StateMachine(this.name, this.states)
-    statemachine.setState(state)
+    var statemachine = new sm.StateMachine(`${this.name}:${key}`, this.states, (creator) => callback(creator))
     this.collection.set(key, statemachine)
   }
   persistState (callback) {
