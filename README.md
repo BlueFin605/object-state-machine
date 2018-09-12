@@ -12,7 +12,17 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
-Working on it, coming soon
+Using npm:
+
+```shell
+  npm install --save-dev javascript-state-machine
+```
+
+In Node.js:
+
+```javascript
+  var StateMachine = require('javascript-state-machine');
+```
 
 ### Usage
 
