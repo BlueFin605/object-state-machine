@@ -4,6 +4,7 @@ class Offering {
     this.name = 'offering'
     this.statemachine = statemachine
   }
+
   hangUp (data) {
     console.log(`sm event:hangup current state:${this.name}`)
     return this.statemachine.createNextState('onhook', data)
