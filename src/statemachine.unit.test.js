@@ -3,7 +3,7 @@ var assert = require('assert')
 var sm = require('./statemachine.js')
 
 test('constructor saves init values', () => {
-  var states = {
+  var statesFactory = {
     state1: {
       create: function () {
         return 1
@@ -15,9 +15,9 @@ test('constructor saves init values', () => {
       }
     }
   }
-  var statemachine = new sm.StateMachine('smname', states)
+  var statemachine = new sm.StateMachine('smname', statesFactory)
   expect(statemachine.name).toBe('smname')
-  expect(statemachine.states).toBe(states)
+  expect(statemachine.statesFactory).toBe(statesFactory)
   expect(statemachine.persistStateCallback).toBe(null)
 })
 

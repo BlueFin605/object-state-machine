@@ -1,7 +1,7 @@
 // My module
-function StateMachine (name, states) {
+function StateMachine (name, statesFactory) {
   this.name = name
-  this.states = states
+  this.statesFactory = statesFactory
   this.currentState = null
   this.currentData = {}
   this.persistStateCallback = null
@@ -42,7 +42,7 @@ StateMachine.prototype.changeState = function (callback) {
 StateMachine.prototype.createNextState = function (name, data) {
   // console.log(`create next state of ${name}:${data}`);
   return {
-    state: this.states[name].create(this),
+    state: this.statesFactory[name].create(this),
     data: data
   }
 }

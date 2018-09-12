@@ -6,7 +6,7 @@ var offering = require('./states/stateoffering')
 var ringback = require('./states/stateringback')
 var connected = require('./states/stateconnected')
 
-var states = {
+var statesFactory = {
   onhook: {
     create: function (statemachine) {
       return new onhook.OnHook(statemachine)
@@ -34,7 +34,7 @@ var states = {
   }
 }
 
-var statemachine = new sm.StateMachine('phone sm', states)
+var statemachine = new sm.StateMachine('phone sm', statesFactory)
 
 console.log('Single instance state machine')
 console.log('=============================')
