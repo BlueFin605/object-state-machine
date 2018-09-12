@@ -15,13 +15,13 @@ These instructions will get you a copy of the project up and running on your loc
 Using npm:
 
 ```shell
-  npm install --save-dev javascript-state-machine
+  npm install --save-dev object-state-machine
 ```
 
 In Node.js:
 
 ```javascript
-  var StateMachine = require('javascript-state-machine');
+  var StateMachine = require('object-state-machine');
 ```
 
 ### Usage
