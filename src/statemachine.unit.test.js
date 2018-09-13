@@ -16,16 +16,16 @@ test('constructor saves init values', () => {
     }
   }
   var statemachine = new sm.StateMachine('smname', statesFactory)
-  expect(statemachine.name).toBe('smname')
-  expect(statemachine.statesFactory).toBe(statesFactory)
-  expect(statemachine.persistStateCallback).toBe(null)
+  expect(statemachine.getName()).toBe('smname')
+  expect(statemachine.getStatesFactory()).toBe(statesFactory)
+  expect(statemachine.getPersistStateCallback()).toBe(null)
 })
 
 test('persistState saves callback', () => {
   var statemachine = new sm.StateMachine('smname', null, null)
   var callback = (state, data) => { console.log(`phone sm persist state ${state}:${data}`) }
   statemachine.persistState(callback)
-  expect(statemachine.persistStateCallback).toBe(callback)
+  expect(statemachine.getPersistStateCallback()).toBe(callback)
 })
 
 test('state initialisor gets called', () => {
@@ -33,8 +33,8 @@ test('state initialisor gets called', () => {
   var origstatedata = { state: origstate, data: 'data' }
   var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
   statemachine.changeState((state, data) => null)
-  expect(statemachine.currentData).toBe('data')
-  expect(statemachine.currentState).toBe(origstate)
+  expect(statemachine.queryState((state, data) => data)).toBe('data')
+  expect(statemachine.queryState((state, data) => state)).toBe(origstate)
 })
 
 test('change state to null makes no change', () => {
@@ -46,8 +46,8 @@ test('change state to null makes no change', () => {
   var newstatedata = { state: newstate, data: newdata }
   statemachine.changeState((state, data) => newstatedata)
   statemachine.changeState((state, data) => null)
-  expect(statemachine.currentData).toBe(newdata)
-  expect(statemachine.currentState).toBe(newstate)
+  expect(statemachine.queryState((state, data) => data)).toEqual(newdata)
+  expect(statemachine.queryState((state, data) => state)).toBe(newstate)
 })
 
 test('change state to same state makes no change', () => {
@@ -59,8 +59,8 @@ test('change state to same state makes no change', () => {
   var newstatedata = { state: newstate, data: newdata }
   statemachine.changeState((state, data) => newstatedata)
   statemachine.changeState((state, data) => newstatedata)
-  expect(statemachine.currentData).toBe(newdata)
-  expect(statemachine.currentState).toBe(newstate)
+  expect(statemachine.queryState((state, data) => data)).toEqual(newdata)
+  expect(statemachine.queryState((state, data) => state)).toBe(newstate)
 })
 
 test('change state to new state changes state', () => {
@@ -75,8 +75,8 @@ test('change state to new state changes state', () => {
   var newerdata = { data: 'data4' }
   var newerstatedata = { state: newerstate, data: newerdata }
   statemachine.changeState((state, data) => newerstatedata)
-  expect(statemachine.currentData).toBe(newerdata)
-  expect(statemachine.currentState).toBe(newerstate)
+  expect(statemachine.queryState((state, data) => data)).toEqual(newerdata)
+  expect(statemachine.queryState((state, data) => state)).toBe(newerstate)
 })
 
 test('initial setting of state does not persist callback', () => {

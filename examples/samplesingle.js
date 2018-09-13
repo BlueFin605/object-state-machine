@@ -34,11 +34,12 @@ var statesFactory = {
   }
 }
 
-var statemachine = new sm.StateMachine('phone sm', statesFactory, (creator) => creator.createNextState('onhook', null))
+var statemachine = new sm.Builder('phone(s) sm', statesFactory, (creator) => creator.createNextState('onhook', null))
+  .withPersistance((state, data) => { console.log(`phone sm persist state ${state.name}:${data}`) })
+  .build()
 
 console.log('Single instance state machine')
 console.log('=============================')
-statemachine.persistState((state, data) => { console.log(`phone sm persist state ${state.name}:${data}`) })
 statemachine.changeState((state, data) => state.offHook(data))
 statemachine.changeState((state, data) => state.dial(data, '+64 (09) 123456'))
 statemachine.changeState((state, data) => state.connected(data))
