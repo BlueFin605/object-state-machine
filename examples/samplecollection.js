@@ -33,7 +33,6 @@ var stateFactory = {
   }
 }
 
-// var statemachinecollection = new smcollection.StateMachineCollection('phone(s) sm', stateFactory)
 var statemachinecollection = new smcollection.Builder('phone(s) sm', stateFactory, (creator) => creator.createNextState('onhook', null))
   .withPersistance((state, data) => { console.log(`phone(s) sm persist state ${state.name}:${data}`) })
   .build()

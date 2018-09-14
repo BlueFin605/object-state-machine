@@ -22,6 +22,7 @@ const StateMachineCollection = (function () {
     static get Builder () {
       class Builder {
         constructor (name, statesFactory, initialStateCreator) {
+          internal(this).name = name
           internal(this).builder = new StateMachine.Builder(name, statesFactory, initialStateCreator)
         }
 
@@ -39,24 +40,9 @@ const StateMachineCollection = (function () {
       return Builder
     }
 
-    // initialiseState (key, callback) {
-    //   if (internal(this).collection.has(key)) {
-    //     console.log(`${key} already exists in collection`)
-    //     return
-    //   }
-    //   var statemachine = new sm.StateMachine(`${internal(this).name}:${key}`, internal(this).states, (creator) => callback(creator))
-    //   internal(this).collection.set(key, statemachine)
-    // }
-
-    // persistState (callback) {
-    //   for (var [key, value] of internal(this).collection) {
-    //     value.persistState((state, data) => callback(key, state, data))
-    //   }
-    // }
-
     changeState (key, callback) {
       if (internal(this).collection.has(key) === false) {
-        internal(this).collection.set(key, internal(this).builder.build())
+        internal(this).collection.set(key, internal(this).builder.buildWithName(`${internal(this).name}:${key}`))
       }
 
       internal(this).collection.get(key).changeState(callback)

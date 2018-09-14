@@ -39,6 +39,11 @@ const StateMachine = (function () {
           var sm = new StateMachine(internal(this).name, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
           return sm
         }
+
+        buildWithName (overRideName) {
+          var sm = new StateMachine(overRideName, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
+          return sm
+        }
       }
 
       return Builder
@@ -58,9 +63,9 @@ const StateMachine = (function () {
 
     changeState (callback) {
       if (internal(this).currentState == null) {
-        console.log(`createing initial state for  ${internal(this).name}`)
+        console.log(`sm[${internal(this).name}]creating initial state`)
         var initState = internal(this).initialStateCreator(new Accessor(internal(this).statesFactory))
-        console.log(`sm set state to ${initState.state.name}`)
+        console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
         internal(this).currentState = initState.state
         internal(this).currentData = initState.data
       }
@@ -72,7 +77,7 @@ const StateMachine = (function () {
         return
       }
 
-      console.log(`sm changing state from ${internal(this).currentState.name} to ${newState.state.name}`)
+      console.log(`sm[${internal(this).name}] changing state from ${internal(this).currentState.name} to ${newState.state.name}`)
       internal(this).currentState = newState.state
       internal(this).currentData = newState.data
 
@@ -85,9 +90,9 @@ const StateMachine = (function () {
 
     queryState (callback) {
       if (internal(this).currentState == null) {
-        console.log(`createing initial state for  ${internal(this).name}`)
+        console.log(`sm[${internal(this).name}] creating initial state`)
         var initState = internal(this).initialStateCreator(this)
-        console.log(`sm set state to ${initState.state.name}`)
+        console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
         internal(this).currentState = initState.state
         internal(this).currentData = initState.data
       }
