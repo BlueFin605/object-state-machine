@@ -12,12 +12,12 @@ const StateMachine = (function () {
   }
 
   class StateMachine {
-    constructor (name, statesFactory, initialStateCreator) {
+    constructor (name, statesFactory, initialStateCreator, persistState) {
       internal(this).name = name
       internal(this).statesFactory = statesFactory
       internal(this).currentState = null
       internal(this).currentData = {}
-      internal(this).persistStateCallback = null
+      internal(this).persistStateCallback = persistState
       internal(this).initialStateCreator = initialStateCreator
     }
 
@@ -27,7 +27,7 @@ const StateMachine = (function () {
           internal(this).name = name
           internal(this).statesFactory = statesFactory
           internal(this).initialStateCreator = initialStateCreator
-          internal(this).thisisthebuider = true
+          internal(this).persistance = null
         }
 
         withPersistance (persistance) {
@@ -36,11 +36,7 @@ const StateMachine = (function () {
         }
 
         build () {
-          var sm = new StateMachine(internal(this).name, internal(this).statesFactory, internal(this).initialStateCreator)
-          if (internal(this).persistance !== null) {
-            sm.persistState(internal(this).persistance)
-          }
-
+          var sm = new StateMachine(internal(this).name, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
           return sm
         }
       }
@@ -58,10 +54,6 @@ const StateMachine = (function () {
 
     getPersistStateCallback () {
       return internal(this).persistStateCallback
-    }
-
-    persistState (callback) {
-      internal(this).persistStateCallback = callback
     }
 
     changeState (callback) {
@@ -123,5 +115,5 @@ const StateMachine = (function () {
   return StateMachine
 }())
 
-module.exports.StateMachine = StateMachine
+// module.exports.StateMachine = StateMachine
 module.exports.Builder = StateMachine.Builder

@@ -15,16 +15,18 @@ test('constructor saves init values', () => {
       }
     }
   }
-  var statemachine = new sm.StateMachine('smname', statesFactory)
+
+  var statemachine = new sm.Builder('smname', statesFactory, (creator) => creator.createNextState('onhook', null)).build()
   expect(statemachine.getName()).toBe('smname')
   expect(statemachine.getStatesFactory()).toBe(statesFactory)
   expect(statemachine.getPersistStateCallback()).toBe(null)
 })
 
 test('persistState saves callback', () => {
-  var statemachine = new sm.StateMachine('smname', null, null)
   var callback = (state, data) => { console.log(`phone sm persist state ${state}:${data}`) }
-  statemachine.persistState(callback)
+  var statemachine = new sm.Builder('smname', null, (creator) => creator.createNextState('onhook', null))
+    .withPersistance(callback)
+    .build()
   expect(statemachine.getPersistStateCallback()).toBe(callback)
 })
 
@@ -32,10 +34,10 @@ test('state initialisor gets called', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
   var calledcreateor = 'test will fail if it is a string'
-  var statemachine = new sm.StateMachine('smname', null, (creator) => {
+  var statemachine = new sm.Builder('smname', null, (creator) => {
     calledcreateor = creator
     return origstatedata
-  })
+  }).build()
 
   statemachine.changeState((state, data) => null)
   console.log(`calledcreateor ${calledcreateor}`)
@@ -48,7 +50,7 @@ test('state initialisor gets called', () => {
 test('change state to null makes no change', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var statemachine = new sm.Builder('smname', null, (creator) => origstatedata).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }
@@ -61,7 +63,7 @@ test('change state to null makes no change', () => {
 test('change state to same state makes no change', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var statemachine = new sm.Builder('smname', null, (creator) => origstatedata).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }
@@ -74,7 +76,7 @@ test('change state to same state makes no change', () => {
 test('change state to new state changes state', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var statemachine = new sm.Builder('smname', null, (creator) => origstatedata).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }
@@ -90,9 +92,8 @@ test('change state to new state changes state', () => {
 test('initial setting of state does not persist callback', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
   var callback = sinon.fake()
-  statemachine.persistState(callback)
+  var statemachine = new sm.Builder('smname', null, (creator) => origstatedata).withPersistance(callback).build()
   statemachine.changeState((state, data) => null)
   assert(!callback.called)
 })
@@ -100,9 +101,8 @@ test('initial setting of state does not persist callback', () => {
 test('change state to new state changes state calls persist callback', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
   var callback = sinon.fake()
-  statemachine.persistState(callback)
+  var statemachine = new sm.Builder('smname', null, (creator) => origstatedata).withPersistance(callback).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }

@@ -33,12 +33,15 @@ var stateFactory = {
   }
 }
 
-var statemachinecollection = new smcollection.StateMachineCollection('phone(s) sm', stateFactory)
+// var statemachinecollection = new smcollection.StateMachineCollection('phone(s) sm', stateFactory)
+var statemachinecollection = new smcollection.Builder('phone(s) sm', stateFactory, (creator) => creator.createNextState('onhook', null))
+  .withPersistance((state, data) => { console.log(`phone(s) sm persist state ${state.name}:${data}`) })
+  .build()
 
 console.log('Multi instance state machine')
 console.log('============================')
-statemachinecollection.initialiseState('0x1', (creator) => creator.createNextState('onhook', 'dataasstring'))
-statemachinecollection.persistState((key, state, data) => { console.log(`phone(s) sm persist state ${key}:${state.name}:${data}`) })
+// statemachinecollection.initialiseState('0x1', (creator) => creator.createNextState('onhook', 'dataasstring'))
+// statemachinecollection.persistState((key, state, data) => { console.log(`phone(s) sm persist state ${key}:${state.name}:${data}`) })
 statemachinecollection.changeState('0x1', (state, data) => state.offHook(data))
 statemachinecollection.changeState('0x1', (state, data) => state.dial(data, '+64 (09) 123456'))
 statemachinecollection.changeState('0x1', (state, data) => state.connected(data))
