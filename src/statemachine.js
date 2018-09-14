@@ -67,7 +67,7 @@ const StateMachine = (function () {
     changeState (callback) {
       if (internal(this).currentState == null) {
         console.log(`createing initial state for  ${internal(this).name}`)
-        var initState = internal(this).initialStateCreator(this)
+        var initState = internal(this).initialStateCreator(new Accessor(internal(this).statesFactory))
         console.log(`sm set state to ${initState.state.name}`)
         internal(this).currentState = initState.state
         internal(this).currentData = initState.data
@@ -104,11 +104,17 @@ const StateMachine = (function () {
       var dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
       return callback(internal(this).currentState, dataCopy)
     }
+  }
+
+  class Accessor {
+    constructor (statesFactory) {
+      this.statesFactory = statesFactory
+    }
 
     createNextState (name, data) {
       // console.log(`create next state of ${name}:${data}`);
       return {
-        state: internal(this).statesFactory[name].create(this),
+        state: this.statesFactory[name].create(this),
         data: data
       }
     }

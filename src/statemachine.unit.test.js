@@ -31,8 +31,16 @@ test('persistState saves callback', () => {
 test('state initialisor gets called', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.StateMachine('smname', null, (creator) => origstatedata)
+  var calledcreateor = 'test will fail if it is a string'
+  var statemachine = new sm.StateMachine('smname', null, (creator) => {
+    calledcreateor = creator
+    return origstatedata
+  })
+
   statemachine.changeState((state, data) => null)
+  console.log(`calledcreateor ${calledcreateor}`)
+
+  expect('createNextState' in calledcreateor).toBe(true)
   expect(statemachine.queryState((state, data) => data)).toBe('data')
   expect(statemachine.queryState((state, data) => state)).toBe(origstate)
 })
