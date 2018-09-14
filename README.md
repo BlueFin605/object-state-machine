@@ -69,10 +69,12 @@ class Connected {
 
 
 ##### 3. Create a instance of the state machine
-The state machine is constructed, passing in a name that will represent the state machine in logging, the state factory. and a function to create the initial state.  The creator is the instance of the statemachine so you can call createNextState to initialise the statemachine, this gets called the first tine an event is fired.
+The state machine is constructed using the fluent builder, passing in a name that will represent the state machine in logging, the state factory. and a function to create the initial state.  The creator is the instance of the statemachine so you can call createNextState to initialise the statemachine, this gets called the first tine an event is fired.
 
 ```shell
-var sm = new statemachine.StateMachine('sample state machine', statesFactory, (creator) => creator.createNextState('disconnected', 'not connected'))
+var sm = statemachine.Builder('sample state machine', statesFactory, (creator) => creator.createNextState('disconnected', 'not connected'))
+  .build()
+
 ```
 
 ##### 4. Fire events into the state machine
@@ -92,12 +94,9 @@ statemachine.persistState((state, data) => { console.log(`we can save to state:$
  * JavaScript
  
 ## To Do List
-1. Finish README
-2. Complete unit tests
-3. Add proper logging
-4. Add a fluent builder interface to create a statemachine
-5. Type checking?
-6. Enable child state machine to allow breaking up a larger entity into smaller orthogonal state machines
+1. Complete unit tests
+2. Add proper logging
+3. Enable child state machine to allow breaking up a larger entity into smaller orthogonal state machines
 
 ## Contributing
 
