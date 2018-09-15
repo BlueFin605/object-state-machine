@@ -1,9 +1,9 @@
 {
   "name": "object-state-machine",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "license": "MIT",
   "description": "",
-  "main": "./build/statemachine.js",
+  "main": "./build/index.js",
   "keywords": [],
   "author": "",
   "devDependencies": {
