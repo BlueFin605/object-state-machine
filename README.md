@@ -22,6 +22,8 @@ In Node.js:
 
 ### Usage
 
+#### State Machine
+
 ##### 1. Create a factory object
 A factory object needs to be implemented that will instantiate each of the different states, each property has a function to create the object that represents the state.
 
@@ -89,6 +91,10 @@ sm.changeState((state, data) => state.dropConnection(data))
 If you wish to persist the state of the state machine to storage somewhere you can supply a callback which gets called whenever the state machine transistions.
 
 statemachine.persistState((state, data) => { console.log(`we can save to state:${state.name} and it's data:${data} somewhere`)})
+
+#### State MAchine Collection
+
+#### Persistance
 
 ## Dependencies
  * JavaScript
