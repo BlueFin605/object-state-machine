@@ -18,7 +18,6 @@ In Node.js:
 
 ```javascript
   var statemachine = require('object-state-machine');
-  var statemachine = require('object-state-machine');
 ```
 
 ### Usage
