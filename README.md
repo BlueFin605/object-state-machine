@@ -18,6 +18,7 @@ In Node.js:
 
 ```javascript
   var statemachine = require('object-state-machine');
+  var statemachine = require('object-state-machine');
 ```
 
 ### Usage
@@ -74,7 +75,7 @@ class Connected {
 The state machine is constructed using the fluent builder, passing in a name that will represent the state machine in logging, the state factory. and a function to create the initial state.  The creator is the instance of the statemachine so you can call createNextState to initialise the statemachine, this gets called the first tine an event is fired.
 
 ```shell
-var sm = statemachine.Builder('sample state machine', statesFactory, (creator) => creator.createNextState('disconnected', 'not connected'))
+var sm = new statemachine.StateMachine.Builder('sample state machine', statesFactory, (creator) => creator.createNextState('disconnected', 'not connected'))
   .build()
 
 ```
@@ -87,14 +88,36 @@ sm.changeState((state, data) => state.onDisconnected(data, 'shutdown'))
 sm.changeState((state, data) => state.dropConnection(data))
 ```
 
-##### 5. Persist the state to storage somewhere
-If you wish to persist the state of the state machine to storage somewhere you can supply a callback which gets called whenever the state machine transistions.
+#### State Machine Collection
+
+Sometimes you need t omanage a collection of state machines, so trhe StateMachineCollection is a simple warpper aund the StateMachine which manages this collection.
+
+You create the factory and state instances as you do above for the single instance of a StateMachine.
+
+
+##### 1. Create a instance of the state machine
+The SatteMachineCollection is built using a Fluent Builder in a similar way to the StateMachine.
+
+```shell
+var sm = new StateMachine.StateMachineCollection.Builder('phone(s) sm', stateFactory, (creator) => creator.createNextState('onhook', null))
+  .build()
+
+```
+
+##### 2. Fire events into the state machine
+Events are fired in the same was a a stand-alone statemachine, except you supply the key to the collection to identify the instance you wish to modify.
+
+```shell
+sm.changeState('0x1',(state, data) => state.onDisconnected(data, 'shutdown'))
+sm.changeState('0x1',(state, data) => state.dropConnection(data))
+```
+
+#### Persistance
+If you wish to persist the state of the state machine to storage somewhere you can supply a callback which gets called whenever the state machine transistions.  This applies to both stand-alone and collection state machine implementations
 
 statemachine.persistState((state, data) => { console.log(`we can save to state:${state.name} and it's data:${data} somewhere`)})
 
-#### State MAchine Collection
 
-#### Persistance
 
 ## Dependencies
  * JavaScript

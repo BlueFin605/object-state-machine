@@ -3,5 +3,5 @@ import StateMAchineCollection from './statemachinecollection'
 
 export {
   StateMachine,
-  StateMAchineCollection
+  StateMachineCollection
 }
