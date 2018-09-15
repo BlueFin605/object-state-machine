@@ -1,6 +1,6 @@
 var sinon = require('sinon')
 var assert = require('assert')
-var sm = require('./index.js')
+var sm = require('./statemachine.js')
 
 test('constructor saves init values', () => {
   var statesFactory = {

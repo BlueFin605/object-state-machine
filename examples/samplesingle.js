@@ -1,5 +1,5 @@
 // var smcollection = require('../collections/statemachinecollection.js')
-var sm = require('../src/index.js')
+var sm = require('../src/statemachine.js')
 var onhook = require('./states/stateonhook.js')
 var dialtone = require('./states/statedialtone')
 var offering = require('./states/stateoffering')

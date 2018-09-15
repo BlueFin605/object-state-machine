@@ -1,4 +1,4 @@
-var StateMachine = require('../index.js')
+var StateMachine = require('./statemachine.js')
 
 const StateMachineCollection = (function () {
   const _private = new WeakMap()

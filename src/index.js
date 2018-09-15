@@ -1,5 +1,6 @@
-// My module
-const StateMachine = (function () {
+var StateMachine = require('./statemachinecollection.js')
+
+const StateMachineCollection = (function () {
   const _private = new WeakMap()
 
   const internal = (key) => {
@@ -11,37 +12,27 @@ const StateMachine = (function () {
     return _private.get(key)
   }
 
-  class StateMachine {
-    constructor (name, statesFactory, initialStateCreator, persistState) {
+  class StateMachineCollection {
+    constructor (name, stateMachineBuilder) {
+      internal(this).collection = new Map()
       internal(this).name = name
-      internal(this).statesFactory = statesFactory
-      internal(this).currentState = null
-      internal(this).currentData = {}
-      internal(this).persistStateCallback = persistState
-      internal(this).initialStateCreator = initialStateCreator
+      internal(this).builder = stateMachineBuilder
     }
 
     static get Builder () {
       class Builder {
         constructor (name, statesFactory, initialStateCreator) {
           internal(this).name = name
-          internal(this).statesFactory = statesFactory
-          internal(this).initialStateCreator = initialStateCreator
-          internal(this).persistance = null
+          internal(this).builder = new StateMachine.Builder(name, statesFactory, initialStateCreator)
         }
 
         withPersistance (persistance) {
-          internal(this).persistance = persistance
+          internal(this).builder = internal(this).builder.withPersistance(persistance)
           return this
         }
 
         build () {
-          var sm = new StateMachine(internal(this).name, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
-          return sm
-        }
-
-        buildWithName (overRideName) {
-          var sm = new StateMachine(overRideName, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
+          var sm = new StateMachineCollection(internal(this).name, internal(this).builder)
           return sm
         }
       }
@@ -49,76 +40,17 @@ const StateMachine = (function () {
       return Builder
     }
 
-    getName () {
-      return internal(this).name
-    }
-
-    getStatesFactory () {
-      return internal(this).statesFactory
-    }
-
-    getPersistStateCallback () {
-      return internal(this).persistStateCallback
-    }
-
-    changeState (callback) {
-      if (internal(this).currentState == null) {
-        console.log(`sm[${internal(this).name}]creating initial state`)
-        var initState = internal(this).initialStateCreator(new Accessor(internal(this).statesFactory))
-        console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
-        internal(this).currentState = initState.state
-        internal(this).currentData = initState.data
+    changeState (key, callback) {
+      if (internal(this).collection.has(key) === false) {
+        internal(this).collection.set(key, internal(this).builder.buildWithName(`${internal(this).name}:${key}`))
       }
 
-      // take a copy of the data, so if a state wants to chnage it, it needs to chnage state(to itself if necessary)
-      var dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
-      var newState = callback(internal(this).currentState, dataCopy)
-      if (newState === null || newState.state === null || newState.state === internal(this).currentState) {
-        return
-      }
-
-      console.log(`sm[${internal(this).name}] changing state from ${internal(this).currentState.name} to ${newState.state.name}`)
-      internal(this).currentState = newState.state
-      internal(this).currentData = newState.data
-
-      if (internal(this).persistStateCallback !== null) {
-        // we want to send a copy since we want to prevent caller changing the state
-        dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
-        internal(this).persistStateCallback(internal(this).currentState, dataCopy)
-      }
-    }
-
-    queryState (callback) {
-      if (internal(this).currentState == null) {
-        console.log(`sm[${internal(this).name}] creating initial state`)
-        var initState = internal(this).initialStateCreator(this)
-        console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
-        internal(this).currentState = initState.state
-        internal(this).currentData = initState.data
-      }
-
-      // take a copy of the data, so if a state wants to chnage it, it needs to chnage state(to itself if necessary)
-      var dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
-      return callback(internal(this).currentState, dataCopy)
+      internal(this).collection.get(key).changeState(callback)
     }
   }
 
-  class Accessor {
-    constructor (statesFactory) {
-      this.statesFactory = statesFactory
-    }
-
-    createNextState (name, data) {
-      // console.log(`create next state of ${name}:${data}`);
-      return {
-        state: this.statesFactory[name].create(this),
-        data: data
-      }
-    }
-  }
-
-  return StateMachine
+  return StateMachineCollection
 }())
 
-// module.exports.StateMachine = StateMachine
-module.exports.Builder = StateMachine.Builder
+// module.exports.StateMachineCollection = StateMachineCollection
+module.exports.Builder = StateMachineCollection.Builder
