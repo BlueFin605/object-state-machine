@@ -1,5 +1,5 @@
 import StateMachine from './statemachine'
-import StateMAchineCollection from './statemachinecollection'
+import StateMachineCollection from './statemachinecollection'
 
 export {
   StateMachine,
