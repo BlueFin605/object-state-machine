@@ -27,6 +27,7 @@ In Node.js:
 ##### 1. Create a factory object
 A factory object needs to be implemented that will instantiate each of the different states, each property has a function to create the object that represents the state.
 
+This can be defined as a sample object
 ```shell
 var statesFactory = {
   connected: {
@@ -45,6 +46,16 @@ var statesFactory = {
     }
   }
 }
+```
+
+or use the DefaultFactory
+
+```
+var statesFactory = new sm.DefaultFactory.Builder()
+  .addState('connected', (statemachine) => new Connected(statemachine))
+  .addState('disconnected', (statemachine) => new Disconnected(statemachine))
+  .addState('dropping', (statemachine) => new Dropping(statemachine))
+  .build()
 ```
 
 ##### 2. Create a class for each state
