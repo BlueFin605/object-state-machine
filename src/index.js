@@ -1,7 +1,5 @@
-import StateMachine from './statemachine'
-import StateMachineCollection from './statemachinecollection'
+var sm = require('./statemachine')
+var smc = require('./statemachinecollection')
 
-export {
-  StateMachine,
-  StateMachineCollection
-}
+exports.StateMachine = sm
+exports.StateMachineCollection = smc

@@ -1,4 +1,4 @@
-var smcollection = require('../src/statemachinecollection.js')
+var smcollection = require('../src/index.js')
 var onhook = require('./states/stateonhook.js')
 var dialtone = require('./states/statedialtone')
 var offering = require('./states/stateoffering')
@@ -33,7 +33,7 @@ var stateFactory = {
   }
 }
 
-var statemachinecollection = new smcollection.Builder('phone(s) sm', stateFactory, (creator) => creator.createNextState('onhook', null))
+var statemachinecollection = new smcollection.StateMachineCollection.Builder('phone(s) sm', stateFactory, (creator) => creator.createNextState('onhook', null))
   .withPersistance((state, data) => { console.log(`phone(s) sm persist state ${state.name}:${data}`) })
   .build()
 
