@@ -12,21 +12,21 @@ const StateMachine = (function () {
   }
 
   class StateMachine {
-    constructor (name, statesFactory, initialStateCreator, persistState) {
+    constructor (name, statesFactory, initialiser, persistState) {
       internal(this).name = name
       internal(this).statesFactory = statesFactory
       internal(this).currentState = null
       internal(this).currentData = {}
       internal(this).persistStateCallback = persistState
-      internal(this).initialStateCreator = initialStateCreator
+      internal(this).initialiser = initialiser
     }
 
     static get Builder () {
       class Builder {
-        constructor (name, statesFactory, initialStateCreator) {
+        constructor (name, statesFactory, initialiser) {
           internal(this).name = name
           internal(this).statesFactory = statesFactory
-          internal(this).initialStateCreator = initialStateCreator
+          internal(this).initialiser = initialiser
           internal(this).persistance = null
         }
 
@@ -35,13 +35,18 @@ const StateMachine = (function () {
           return this
         }
 
+        withInitialiser (initialiser) {
+          internal(this).initialiser = initialiser
+          return this
+        }
+
         build () {
-          var sm = new StateMachine(internal(this).name, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
+          var sm = new StateMachine(internal(this).name, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance)
           return sm
         }
 
         buildWithName (overRideName) {
-          var sm = new StateMachine(overRideName, internal(this).statesFactory, internal(this).initialStateCreator, internal(this).persistance)
+          var sm = new StateMachine(overRideName, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance)
           return sm
         }
       }
@@ -64,7 +69,7 @@ const StateMachine = (function () {
     changeState (callback) {
       if (internal(this).currentState == null) {
         console.log(`sm[${internal(this).name}]creating initial state`)
-        var initState = internal(this).initialStateCreator(new Accessor(internal(this).statesFactory))
+        var initState = internal(this).initialiser(new Accessor(internal(this).statesFactory))
         console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
         internal(this).currentState = initState.state
         internal(this).currentData = initState.data
@@ -91,7 +96,7 @@ const StateMachine = (function () {
     queryState (callback) {
       if (internal(this).currentState == null) {
         console.log(`sm[${internal(this).name}] creating initial state`)
-        var initState = internal(this).initialStateCreator(this)
+        var initState = internal(this).initialiser(this)
         console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
         internal(this).currentState = initState.state
         internal(this).currentData = initState.data

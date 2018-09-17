@@ -13,17 +13,19 @@ const StateMachineCollection = (function () {
   }
 
   class StateMachineCollection {
-    constructor (name, stateMachineBuilder) {
+    constructor (name, initialiser, stateMachineBuilder) {
       internal(this).collection = new Map()
       internal(this).name = name
+      internal(this).initialiser = initialiser
       internal(this).builder = stateMachineBuilder
     }
 
     static get Builder () {
       class Builder {
-        constructor (name, statesFactory, initialStateCreator) {
+        constructor (name, statesFactory, initialiser) {
           internal(this).name = name
-          internal(this).builder = new StateMachine.Builder(name, statesFactory, initialStateCreator)
+          internal(this).initialiser = initialiser
+          internal(this).builder = new StateMachine.Builder(name, statesFactory, null)
         }
 
         withPersistance (persistance) {
@@ -32,7 +34,7 @@ const StateMachineCollection = (function () {
         }
 
         build () {
-          var sm = new StateMachineCollection(internal(this).name, internal(this).builder)
+          var sm = new StateMachineCollection(internal(this).name, internal(this).initialiser, internal(this).builder)
           return sm
         }
       }
@@ -42,7 +44,9 @@ const StateMachineCollection = (function () {
 
     changeState (key, callback) {
       if (internal(this).collection.has(key) === false) {
-        internal(this).collection.set(key, internal(this).builder.buildWithName(`${internal(this).name}:${key}`))
+        // modify this builder to have a initialiser that passes the key
+        var thisBuilder = internal(this).builder.withInitialiser((creator) => internal(this).initialiser(key, creator))
+        internal(this).collection.set(key, thisBuilder.buildWithName(`${internal(this).name}:${key}`))
       }
 
       internal(this).collection.get(key).changeState(callback)
