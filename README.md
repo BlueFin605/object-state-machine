@@ -27,8 +27,19 @@ In Node.js:
 ##### 1. Create a factory object
 A factory object needs to be implemented that will instantiate each of the different states, each property has a function to create the object that represents the state.
 
-This can be defined as a sample object
-```shell
+You can either use the DefaultFactory
+
+```
+var statesFactory = new sm.DefaultFactory.Builder()
+  .addState('connected', (statemachine) => new Connected(statemachine))
+  .addState('disconnected', (statemachine) => new Disconnected(statemachine))
+  .addState('dropping', (statemachine) => new Dropping(statemachine))
+  .build()
+```
+
+or simply define the object 
+
+```
 var statesFactory = {
   connected: {
     create: function (statemachine) {
@@ -47,17 +58,6 @@ var statesFactory = {
   }
 }
 ```
-
-or use the DefaultFactory
-
-```
-var statesFactory = new sm.DefaultFactory.Builder()
-  .addState('connected', (statemachine) => new Connected(statemachine))
-  .addState('disconnected', (statemachine) => new Disconnected(statemachine))
-  .addState('dropping', (statemachine) => new Dropping(statemachine))
-  .build()
-```
-
 ##### 2. Create a class for each state
 Each state is represented by an object and each object implements the events that it needs to handle, returning either the next state if it wants to transition to a new state or return null or this to not transistion.  The next state is constructed using the createNextState function which takes the name of the state and any data you wish to store.  If the state wishes to change the data associated with the state, it needs to transition to a new state, which could be a new instance of the same type. 
 
@@ -100,16 +100,16 @@ sm.changeState((state, data) => state.dropConnection(data))
 
 #### State Machine Collection
 
-Sometimes you need t omanage a collection of state machines, so trhe StateMachineCollection is a simple warpper aund the StateMachine which manages this collection.
+Sometimes you need to manage a collection of state machines, so the StateMachineCollection is a simple wrapper around the StateMachine which then manages this collection.
 
-You create the factory and state instances as you do above for the single instance of a StateMachine.
+You create the factory and state instances as you do above for the single instance of a StateMachine, the initialiser will get called everytime a new state is required
 
 
 ##### 1. Create a instance of the state machine
-The SatteMachineCollection is built using a Fluent Builder in a similar way to the StateMachine.
+The StateMachineCollection is built using a Fluent Builder in a similar way to the StateMachine.
 
 ```shell
-var sm = new StateMachine.StateMachineCollection.Builder('phone(s) sm', stateFactory, (creator) => creator.createNextState('onhook', null))
+var sm = new StateMachine.StateMachineCollection.Builder('phone(s) sm', stateFactory, (key, creator) => creator.createNextState('onhook', null))
   .build()
 
 ```
