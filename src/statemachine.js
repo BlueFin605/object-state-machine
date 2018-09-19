@@ -73,6 +73,7 @@ const StateMachine = (function () {
         console.log(`sm[${internal(this).name}] set state to ${initState.state.name}`)
         internal(this).currentState = initState.state
         internal(this).currentData = initState.data
+        internal(this).currentName = initState.name
       }
 
       // take a copy of the data, so if a state wants to chnage it, it needs to chnage state(to itself if necessary)
@@ -85,11 +86,12 @@ const StateMachine = (function () {
       console.log(`sm[${internal(this).name}] changing state from ${internal(this).currentState.name} to ${newState.state.name}`)
       internal(this).currentState = newState.state
       internal(this).currentData = newState.data
+      internal(this).currentName = newState.name
 
       if (internal(this).persistStateCallback !== null) {
         // we want to send a copy since we want to prevent caller changing the state
         dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
-        internal(this).persistStateCallback(internal(this).currentState, dataCopy)
+        internal(this).persistStateCallback(internal(this).currentName, dataCopy)
       }
     }
 
@@ -117,6 +119,7 @@ const StateMachine = (function () {
       // console.log(`create next state of ${name}:${data}`);
       return {
         state: this.statesFactory[name].create(this),
+        name: name,
         data: data
       }
     }

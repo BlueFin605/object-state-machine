@@ -42,7 +42,7 @@ var stateFactory = new sm.DefaultFactory.Builder()
   .build()
 
 var statemachine = new sm.StateMachine.Builder('phone sm', stateFactory, (creator) => creator.createNextState('onhook', null))
-  .withPersistance((state, data) => { console.log(`phone sm persist state ${state.name}:${data}`) })
+  .withPersistance((state, data) => { console.log(`phone sm persist state ${state}:${data}`) })
   .build()
 
 console.log('Single instance state machine')

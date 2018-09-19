@@ -34,7 +34,7 @@ var stateFactory = {
 }
 
 var statemachinecollection = new smcollection.StateMachineCollection.Builder('phone(s) sm', stateFactory, (key, creator) => creator.createNextState('onhook', key))
-  .withPersistance((state, data) => { console.log(`phone(s) sm persist state ${state.name}:${data}`) })
+  .withPersistance((state, data) => { console.log(`phone(s) sm persist state ${state}:${data}`) })
   .build()
 
 console.log('Multi instance state machine')

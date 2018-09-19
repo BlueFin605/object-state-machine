@@ -105,11 +105,11 @@ test('change state to new state changes state calls persist callback', () => {
   var statemachine = new sm.Builder('smname', null, (creator) => origstatedata).withPersistance(callback).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
-  var newstatedata = { state: newstate, data: newdata }
+  var newstatedata = { state: newstate, data: newdata, name: 'newstatename' }
   statemachine.changeState((state, data) => newstatedata)
   assert(callback.called)
   // compare values, i.e. copied successfully
-  assert(callback.calledWith(newstate, newdata))
+  assert(callback.calledWith('newstatename', newdata))
   // compare by reference, it should not match
-  assert(!callback.calledWith(newstate, sinon.match.same(newdata)))
+  assert(!callback.calledWith('newstatename', sinon.match.same(newdata)))
 })
