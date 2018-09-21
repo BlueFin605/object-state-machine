@@ -16,7 +16,7 @@ test('async constructor saves init values', () => {
     }
   }
 
-  var statemachine = new sm.Builder('smname', statesFactory, (creator) => creator.createNextState('onhook', null)).build()
+  var statemachine = new sm.Builder('smname', statesFactory, (creator, callback) => callback(null, creator.createNextState('onhook', null))).build()
   expect(statemachine.getName()).toBe('smname')
   expect(statemachine.getStatesFactory()).toBe(statesFactory)
   expect(statemachine.getPersistStateCallback()).toBe(null)
@@ -54,8 +54,8 @@ test('async change state to null makes no change', () => {
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }
-  statemachine.changeState((_state, _data, _callback) => newstatedata, (_err, _result) => {
-    statemachine.changeState((_state, _data, _callback) => null, (_err, _result) => {
+  statemachine.changeState((_state, _data, callback) => callback(null, newstatedata), (_err, _result) => {
+    statemachine.changeState((_state, _data, callback) => callback(null, null), (_err, _result) => {
       expect(statemachine.queryState((_state, data) => data)).toEqual(newdata)
       expect(statemachine.queryState((state, _data) => state)).toBe(newstate)
     })
@@ -65,12 +65,12 @@ test('async change state to null makes no change', () => {
 test('async change state to same state makes no change', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.Builder('smname', null, (_creator) => origstatedata).build()
+  var statemachine = new sm.Builder('smname', null, (creator, callback) => callback(null, origstatedata)).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }
-  statemachine.changeState((_state, _data, _callback) => newstatedata, (_err, _result) => {
-    statemachine.changeState((_state, _data, _callback) => newstatedata, (_err, _result) => {
+  statemachine.changeState((_state, _data, callback) => callback(null, newstatedata), (_err, _result) => {
+    statemachine.changeState((_state, _data, callback) => callback(null, newstatedata), (_err, _result) => {
       expect(statemachine.queryState((_state, data) => data)).toEqual(newdata)
       expect(statemachine.queryState((state, _data) => state)).toBe(newstate)
     })
@@ -80,15 +80,15 @@ test('async change state to same state makes no change', () => {
 test('async change state to new state changes state', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
-  var statemachine = new sm.Builder('smname', null, (_creator) => origstatedata).build()
+  var statemachine = new sm.Builder('smname', null, (creator, callback) => callback(null, origstatedata)).build()
   var newstate = { state: 'state2' }
   var newdata = { data: 'data3' }
   var newstatedata = { state: newstate, data: newdata }
-  statemachine.changeState((_state, _data, _callback) => newstatedata, (_err, _result) => {
+  statemachine.changeState((_state, _data, callback) => callback(null, newstatedata), (_err, _result) => {
     var newerstate = { state: 'state3' }
     var newerdata = { data: 'data4' }
     var newerstatedata = { state: newerstate, data: newerdata }
-    statemachine.changeState((_state, _data, _callback) => newerstatedata, (_err, _result) => {
+    statemachine.changeState((_state, _data, callback) => callback(null, newerstatedata), (_err, _result) => {
       expect(statemachine.queryState((_state, data) => data)).toEqual(newerdata)
       expect(statemachine.queryState((state, _data) => state)).toBe(newerstate)
     })
@@ -99,9 +99,33 @@ test('async initial setting of state does not persist callback', () => {
   var origstate = { state: 'state' }
   var origstatedata = { state: origstate, data: 'data' }
   var callback = sinon.fake()
-  var statemachine = new sm.Builder('smname', null, (_creator) => origstatedata).withPersistance(callback).build()
-  statemachine.changeState((_state, _data, _callback) => null, (_err, _result) => {
+  var statemachine = new sm.Builder('smname', null, (creator, callback) => callback(null, origstatedata)).withPersistance(callback).build()
+  statemachine.changeState((_state, _data, callback) => { callback(null, null) }, (_err, _result) => {
     assert(!callback.called)
+  })
+})
+
+test('async transition failure returns error', () => {
+  var origstate = { state: 'state' }
+  var origstatedata = { state: origstate, data: 'data' }
+  var callback = sinon.fake()
+  var errResult = 'this is the error'
+  var statemachine = new sm.Builder('smname', null, (creator, callback) => callback(null, origstatedata)).withPersistance(callback).build()
+  statemachine.changeState((_state, _data, callback) => { callback(errResult, null) }, (err, _result) => {
+    expect(err).toEqual(errResult)
+  })
+})
+
+test('async persistance failure returns error', () => {
+  var origstate = { state: 'state' }
+  var origstatedata = { state: origstate, data: 'data' }
+  var errResult = 'this is the error'
+  var newstate = { state: 'state2' }
+  var newdata = { data: 'data3' }
+  var newstatedata = { state: newstate, data: newdata }
+  var statemachine = new sm.Builder('smname', null, (creator, callback) => callback(null, origstatedata)).withPersistance((state, data, callback) => { callback(errResult, null) }).build()
+  statemachine.changeState((_state, _data, callback) => { callback(null, newstatedata) }, (err, _result) => {
+    expect(err).toEqual(errResult)
   })
 })
 

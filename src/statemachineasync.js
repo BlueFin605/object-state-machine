@@ -33,7 +33,7 @@ const StateMachineAsync = (function () {
     }
 
     if (newState === null || newState.state === null || newState.state === internal(statemachine).currentState) {
-      asynccallback(err, true)
+      asynccallback(null, true)
       return
     }
 
@@ -47,7 +47,7 @@ const StateMachineAsync = (function () {
       var dataCopy = JSON.parse(JSON.stringify(internal(statemachine).currentData))
       internal(statemachine).persistStateCallback(internal(statemachine).currentName, dataCopy, (err, result) => statePersisted(err, result, asynccallback))
     } else {
-      asynccallback(err, true)
+      asynccallback(null, true)
     }
   }
 
