@@ -116,10 +116,10 @@ const StateMachineAsync = (function () {
       return internal(this).persistStateCallback
     }
 
-    changeState (transition, asynccallback) {
+    changeStateAsync (transition, asynccallback) {
       if (internal(this).currentState == null) {
         console.log(`sm[${internal(this).name}]creating initial state`)
-        internal(this).initialiser(new Accessor(internal(this).statesFactory), (err, state) => stateInitialised(err, state, asynccallback, this, () => this.changeState(transition, asynccallback)))
+        internal(this).initialiser(new Accessor(internal(this).statesFactory), (err, state) => stateInitialised(err, state, asynccallback, this, () => this.changeStateAsync(transition, asynccallback)))
         return
       }
 
@@ -128,10 +128,10 @@ const StateMachineAsync = (function () {
       transition(internal(this).currentState, dataCopy, (err, state) => stateChanged(err, state, asynccallback, this))
     }
 
-    queryState (query, asynccallback) {
+    queryStateAsync (query, asynccallback) {
       if (internal(this).currentState == null) {
         console.log(`sm[${internal(this).name}] creating initial state`)
-        internal(this).initialiser(new Accessor(internal(this).statesFactory), (err, state) => stateInitialised(err, state, asynccallback, this, () => this.queryState(query, asynccallback)))
+        internal(this).initialiser(new Accessor(internal(this).statesFactory), (err, state) => stateInitialised(err, state, asynccallback, this, () => this.queryStateAsync(query, asynccallback)))
       }
 
       // take a copy of the data, so if a state wants to chnage it, it needs to chnage state(to itself if necessary)

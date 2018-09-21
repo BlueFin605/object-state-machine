@@ -57,7 +57,7 @@ chainStateChange((state, data, callback) => state.offHook(data, callback),
       () => chainStateChange((state, data, callback) => state.hangUp(data, callback), null))))
 
 function chainStateChange (transition, next) {
-  statemachine.changeState(transition, (err, result) => {
+  statemachine.changeStateAsync(transition, (err, result) => {
     if (err !== null) {
       console.log(`error transitioning:<${err}>`)
       return
