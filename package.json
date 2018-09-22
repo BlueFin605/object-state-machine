@@ -1,6 +1,6 @@
 {
   "name": "object-state-machine",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "license": "MIT",
   "description": "",
   "main": "./build/index.js",
