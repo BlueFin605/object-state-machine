@@ -71,6 +71,14 @@ const StateMachineAsync = (function () {
       internal(this).initialiser = initialiser
     }
 
+    debugDump () {
+      console.log(`[${internal(this).name}]`)
+      console.log(`[${internal(this).statesFactory}]`)
+      console.log(`[${internal(this).currentState}]`)
+      console.log(`[${internal(this).currentData}]`)
+      console.log(`[${internal(this).persistStateCallback}]`)
+      console.log(`[${internal(this).initialiser}]`)
+    }
     static get Builder () {
       class Builder {
         constructor (name, statesFactory, initialiser) {
