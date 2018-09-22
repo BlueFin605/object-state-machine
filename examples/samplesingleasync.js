@@ -49,14 +49,6 @@ var statemachine = new sm.StateMachineAsync.Builder('phone sm', stateFactory, (c
   })
   .build()
 
-statemachine = new sm.StateMachineAsync.Builder('phone sm', stateFactory, (creator, callback) => callback(null, creator.createNextState('onhook', null)))
-  .withPersistance((state, data, callback) => {
-    console.log(`phone sm persist state ${state}:${data}`)
-    // var errMsg = 'this is my error'
-    callback(null, true)
-  })
-  .build()
-
 console.log('Single Async instance state machine')
 console.log('===================================')
 chainStateChange((state, data, callback) => state.offHook(data, callback),
@@ -65,7 +57,6 @@ chainStateChange((state, data, callback) => state.offHook(data, callback),
       () => chainStateChange((state, data, callback) => state.hangUp(data, callback), null))))
 
 function chainStateChange (transition, next) {
-  statemachine.debugDump()
   statemachine.changeStateAsync(transition, (err, result) => {
     if (err !== null) {
       console.log(`error transitioning:<${err}>`)
