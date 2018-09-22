@@ -1,6 +1,10 @@
+const util = require('util')
+
 // My module
 const StateMachineAsync = (function () {
   const _private = new WeakMap()
+
+  var instCount = 0
 
   const internal = (key) => {
     // Initialize if not created
@@ -63,7 +67,9 @@ const StateMachineAsync = (function () {
 
   class StateMachineAsync {
     constructor (name, statesFactory, initialiser, persistState) {
+      instCount++
       internal(this).name = name
+      internal(this).instCount = instCount
       internal(this).statesFactory = statesFactory
       internal(this).currentState = null
       internal(this).currentData = {}
@@ -72,12 +78,14 @@ const StateMachineAsync = (function () {
     }
 
     debugDump () {
-      console.log(`[${internal(this).name}]`)
-      console.log(`[${internal(this).statesFactory}]`)
-      console.log(`[${internal(this).currentState}]`)
-      console.log(`[${internal(this).currentData}]`)
-      console.log(`[${internal(this).persistStateCallback}]`)
-      console.log(`[${internal(this).initialiser}]`)
+      console.log(util.inspect(this, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).instCount, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).name, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).statesFactory, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).currentState, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).currentData, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).persistStateCallback, { showHidden: false, depth: null }))
+      console.log(util.inspect(internal(this).initialiser, { showHidden: false, depth: null }))
     }
     static get Builder () {
       class Builder {
@@ -99,12 +107,16 @@ const StateMachineAsync = (function () {
         }
 
         build () {
+          console.log('build: building new instance')
           var sm = new StateMachineAsync(internal(this).name, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance)
+          sm.debugDump()
           return sm
         }
 
         buildWithName (overRideName) {
+          console.log('build: building new named instance')
           var sm = new StateMachineAsync(overRideName, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance)
+          sm.debugDump()
           return sm
         }
       }
@@ -163,6 +175,8 @@ const StateMachineAsync = (function () {
     }
   }
 
+  console.log('return StateMachineAsync')
+  // StateMachineAsync.debugDump()
   return StateMachineAsync
 }())
 
