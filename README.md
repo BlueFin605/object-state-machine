@@ -143,6 +143,13 @@ class Connected {
 }
 ```
 
+##### 4. Use helper to wrap callbacks into a Promise
+
+```shell
+statemachine.Promises.StateChangePromise(statemachine, (state, data, callback) => state.onDisconnected(data, callback, 'shutdown')).then(function handlechange (results) {
+  ...
+}
+```
 
 #### State Machine Collection
 

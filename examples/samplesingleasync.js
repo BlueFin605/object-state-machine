@@ -1,4 +1,5 @@
 var sm = require('../src/index.js')
+var pm = require('../src/asyncpromises')
 var onhook = require('./asyncstates/stateonhook.js')
 var dialtone = require('./asyncstates/statedialtone')
 var offering = require('./asyncstates/stateoffering')
@@ -55,6 +56,15 @@ chainStateChange((state, data, callback) => state.offHook(data, callback),
   () => chainStateChange((state, data, callback) => state.dial(data, callback, '+64 (09) 123456'),
     () => chainStateChange((state, data, callback) => state.connected(data, callback),
       () => chainStateChange((state, data, callback) => state.hangUp(data, callback), null))))
+
+console.log('Single Async instance state machine using promises')
+console.log('==================================================')
+pm.StateChangePromise(statemachine, (state, data, callback) => state.offHook(data, callback)).then(function handlechange (results) {
+  console.log(`result from state transition:[${results}]`)
+  pm.StateChangePromise(statemachine, (state, data, callback) => state.dial(data, callback, '+64 (09) 123456')).then(function handlechange (results) {
+    console.log(`result from state transition:[${results}]`)
+  })
+})
 
 function chainStateChange (transition, next) {
   statemachine.changeStateAsync(transition, (err, result) => {
