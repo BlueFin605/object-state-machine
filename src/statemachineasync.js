@@ -81,7 +81,6 @@ const StateMachineAsync = (function () {
           internal(this).persistance = null
           internal(this).handleInvalidTransitionsAsError = false
           internal(this).handleInvalidTransitionsAsSuccess = false
-                    
         }
 
         withPersistance (persistance) {
@@ -105,7 +104,7 @@ const StateMachineAsync = (function () {
         }
 
         build () {
-          var options = { 
+          var options = {
             handleInvalidTransitionsAsError: internal(this).handleInvalidTransitionsAsError,
             handleInvalidTransitionsAsSuccess: internal(this).handleInvalidTransitionsAsSuccess
           }
@@ -114,7 +113,7 @@ const StateMachineAsync = (function () {
         }
 
         buildWithName (overRideName) {
-          var options = { 
+          var options = {
             handleInvalidTransitionsAsError: internal(this).handleInvalidTransitionsAsError,
             handleInvalidTransitionsAsSuccess: internal(this).handleInvalidTransitionsAsSuccess
           }
