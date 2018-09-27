@@ -62,13 +62,14 @@ const StateMachineAsync = (function () {
   }
 
   class StateMachineAsync {
-    constructor (name, statesFactory, initialiser, persistState) {
+    constructor (name, statesFactory, initialiser, persistState, options) {
       internal(this).name = name
       internal(this).statesFactory = statesFactory
       internal(this).currentState = null
       internal(this).currentData = {}
       internal(this).persistStateCallback = persistState
       internal(this).initialiser = initialiser
+      internal(this).options = options
     }
 
     static get Builder () {
@@ -78,6 +79,9 @@ const StateMachineAsync = (function () {
           internal(this).statesFactory = statesFactory
           internal(this).initialiser = initialiser
           internal(this).persistance = null
+          internal(this).handleInvalidTransitionsAsError = false
+          internal(this).handleInvalidTransitionsAsSuccess = false
+                    
         }
 
         withPersistance (persistance) {
@@ -90,13 +94,31 @@ const StateMachineAsync = (function () {
           return this
         }
 
+        handleInvalidTransitions (fail) {
+          if (fail === true) {
+            internal(this).handleInvalidTransitionsAsError = true
+          } else {
+            internal(this).handleInvalidTransitionsAsSuccess = true
+          }
+
+          return this
+        }
+
         build () {
-          var sm = new StateMachineAsync(internal(this).name, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance)
+          var options = { 
+            handleInvalidTransitionsAsError: internal(this).handleInvalidTransitionsAsError,
+            handleInvalidTransitionsAsSuccess: internal(this).handleInvalidTransitionsAsSuccess
+          }
+          var sm = new StateMachineAsync(internal(this).name, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance, options)
           return sm
         }
 
         buildWithName (overRideName) {
-          var sm = new StateMachineAsync(overRideName, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance)
+          var options = { 
+            handleInvalidTransitionsAsError: internal(this).handleInvalidTransitionsAsError,
+            handleInvalidTransitionsAsSuccess: internal(this).handleInvalidTransitionsAsSuccess
+          }
+          var sm = new StateMachineAsync(overRideName, internal(this).statesFactory, internal(this).initialiser, internal(this).persistance, options)
           return sm
         }
       }
@@ -124,8 +146,26 @@ const StateMachineAsync = (function () {
       }
 
       // take a copy of the data, so if a state wants to chnage it, it needs to chnage state(to itself if necessary)
-      var dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
-      transition(internal(this).currentState, dataCopy, (err, state) => stateChanged(err, state, asynccallback, this))
+      let dataCopy = JSON.parse(JSON.stringify(internal(this).currentData))
+      // if (typeof transition !== 'undefined') {
+      try {
+        transition(internal(this).currentState, dataCopy, (err, state) => stateChanged(err, state, asynccallback, this))
+      } catch (err) {
+        console.log(`Error caught:[${err}]`)
+
+        if (err.name === 'TypeError' && internal(this).options.handleInvalidTransitionsAsError === true) {
+          asynccallback(err, null)
+          return
+        }
+
+        if (err.name === 'TypeError' && internal(this).options.handleInvalidTransitionsAsSuccess === true) {
+          asynccallback(null, false)
+          return
+        }
+
+        console.log('rethrowing exception')
+        throw err
+      }
     }
 
     queryStateAsync (query, asynccallback) {

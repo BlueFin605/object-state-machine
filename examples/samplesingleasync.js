@@ -48,6 +48,7 @@ var statemachine = new sm.StateMachineAsync.Builder('phone sm', stateFactory, (c
     // var errMsg = 'this is my error'
     callback(null, true)
   })
+  .handleInvalidTransitions(true)
   .build()
 
 console.log('Single Async instance state machine')
@@ -70,6 +71,9 @@ function chainStateChange (transition, next) {
   statemachine.changeStateAsync(transition, (err, result) => {
     if (err !== null) {
       console.log(`error transitioning:<${err}>`)
+      if (next !== null) {
+        next()
+      }
       return
     }
 
